@@ -2,6 +2,7 @@ streamlit==1.32.0          # UI 프레임워크 (메인 화면)
 plotly==5.20.0             # 간트차트 시각화
 pandas==2.2.0              # 데이터 처리
 anthropic==0.21.0          # Claude AI API
+httpx==0.27.0
 python-pptx==0.6.23        # PPT 파일 생성
 supabase
 openpyxl
