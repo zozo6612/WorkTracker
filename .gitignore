@@ -1,3 +1,5 @@
+api key.txt
+*.txt
 .streamlit/secrets.toml
 data/
 venv/

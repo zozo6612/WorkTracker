@@ -1,5 +1,6 @@
 import streamlit as st
 import datetime
+from datetime import datetime as dt
 from database.db import add_work, get_work, delete_work
 from components.gantt import render_gantt
 
@@ -55,12 +56,28 @@ def render():
     with col_mode:
         mode = st.radio("보기 모드", ["주차별", "일별"], horizontal=True)
     with col_month:
-        month_options = [(f"{y}-{m:02d}", f"{y}년 {m}월")
-                         for y in [2025] for m in range(1, 13)]
+        # 현재 연도 기준으로 전년도 ~ 내후년까지 자동 생성
+        today        = dt.today()
+        current_year = today.year
+        current_ym   = today.strftime("%Y-%m")
+
+        month_options = [
+            (f"{y}-{m:02d}", f"{y}년 {m}월")
+            for y in range(current_year - 1, current_year + 3)
+            for m in range(1, 13)
+        ]
+
+        option_keys   = [m[0] for m in month_options]
+        option_labels = {m[0]: m[1] for m in month_options}
+
+        # 현재 달을 기본값으로
+        default_idx = option_keys.index(current_ym) if current_ym in option_keys else 0
+
         ym = st.selectbox(
             "월 선택",
-            [m[0] for m in month_options],
-            format_func=lambda x: next(m[1] for m in month_options if m[0] == x)
+            option_keys,
+            index=default_idx,
+            format_func=lambda x: option_labels[x]
         )
 
     gantt_mode = "week" if mode == "주차별" else "day"

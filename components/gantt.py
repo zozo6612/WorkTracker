@@ -15,7 +15,13 @@ STATUS_LABELS = {
 }
 
 
-def render_gantt(work_list: list, mode: str = "week", ym: str = "2025-01"):
+def date_to_num(d: datetime) -> float:
+    """날짜를 숫자(일 단위)로 변환"""
+    epoch = datetime(1970, 1, 1)
+    return (d - epoch).days
+
+
+def render_gantt(work_list: list, mode: str = "week", ym: str = "2026-01"):
     if not work_list:
         fig = go.Figure()
         fig.update_layout(height=200, paper_bgcolor="#ffffff")
@@ -26,27 +32,54 @@ def render_gantt(work_list: list, mode: str = "week", ym: str = "2025-01"):
     next_month  = month + 1 if month < 12 else 1
     next_year   = year if month < 12 else year + 1
     month_end   = datetime(next_year, next_month, 1) - timedelta(days=1)
+    today       = datetime.today().replace(hour=0, minute=0, second=0, microsecond=0)
+
+    ms_num = date_to_num(month_start)
+    me_num = date_to_num(month_end)
 
     fig = go.Figure()
 
+    # ── 업무 막대 ─────────────────────────────────────────
+    visible_works = []
     for w in work_list:
         try:
             start = datetime.strptime(w["start_date"], "%Y-%m-%d")
             end   = datetime.strptime(w["end_date"],   "%Y-%m-%d")
         except Exception:
             continue
+        if end < month_start or start > month_end:
+            continue
+        visible_works.append(w)
 
+    if not visible_works:
+        fig.add_annotation(
+            text="이 월에 해당하는 업무가 없어요",
+            xref="paper", yref="paper",
+            x=0.5, y=0.5, showarrow=False,
+            font=dict(size=14, color="#94A3B8")
+        )
+        fig.update_layout(height=200, paper_bgcolor="#ffffff")
+        return fig
+
+    for w in visible_works:
+        start = datetime.strptime(w["start_date"], "%Y-%m-%d")
+        end   = datetime.strptime(w["end_date"],   "%Y-%m-%d")
+
+        display_start = max(start, month_start)
+        display_end   = min(end, month_end)
+
+        s_num    = date_to_num(display_start)
+        duration = date_to_num(display_end) - s_num + 1
         color    = STATUS_COLORS.get(w["status"], "#94A3B8")
-        duration = (end - start).days + 1
+        label    = f"{w['progress']}%" if w.get("progress") and w["status"] != "plan" else ""
 
         fig.add_trace(go.Bar(
-            name=STATUS_LABELS.get(w["status"], w["status"]),
             y=[w["title"]],
             x=[duration],
-            base=[start.strftime("%Y-%m-%d")],
+            base=[s_num],
             orientation="h",
             marker=dict(color=color, line=dict(width=0)),
-            text=f"{w['progress']}%" if w.get("progress") and w["status"] != "plan" else "",
+            text=label,
             textposition="inside",
             insidetextanchor="middle",
             hovertemplate=(
@@ -59,64 +92,75 @@ def render_gantt(work_list: list, mode: str = "week", ym: str = "2025-01"):
             showlegend=False,
         ))
 
-    # 주차별 구분선
+    # ── 눈금 생성 ─────────────────────────────────────────
+    tickvals = []
+    ticktext = []
+
     if mode == "week":
+        # 주차별: 월요일마다 눈금
         cur = datetime(month_start.year, month_start.month, month_start.day)
         while cur.weekday() != 0:
             cur += timedelta(days=1)
         while cur <= month_end:
-            fig.add_vline(
-                x=cur.timestamp() * 1000,
-                line_dash="dot",
-                line_color="#e2e8f0",
-                line_width=1
-            )
+            tickvals.append(date_to_num(cur))
+            ticktext.append(cur.strftime("%m/%d"))
             cur += timedelta(weeks=1)
     else:
-        # 일별 구분선
+        # 일별: 매일 눈금
         cur = datetime(month_start.year, month_start.month, month_start.day)
         while cur <= month_end:
-            fig.add_vline(
-                x=cur.timestamp() * 1000,
-                line_dash="dot",
-                line_color="#f0f4f9",
-                line_width=0.5
-            )
+            tickvals.append(date_to_num(cur))
+            ticktext.append(cur.strftime("%m/%d"))
             cur += timedelta(days=1)
 
-    # 오늘 표시선
-    today = datetime.today()
+    # ── 구분선 shapes ────────────────────────────────────
+    shapes = []
+    for tv in tickvals:
+        shapes.append(dict(
+            type="line",
+            x0=tv, x1=tv, y0=0, y1=1, yref="paper",
+            line=dict(
+                color="#e2e8f0" if mode == "week" else "#f0f4f9",
+                width=1 if mode == "week" else 0.5,
+                dash="dot"
+            )
+        ))
+
+    # ── 오늘 표시 ─────────────────────────────────────────
+    annotations = []
     if month_start <= today <= month_end:
-        fig.add_vline(
-            x=today.timestamp() * 1000,
-            line_color="#6C8EF5",
-            line_width=2,
-            annotation_text="오늘",
-            annotation_position="top left",
-            annotation_font_color="#6C8EF5",
-        )
+        today_num = date_to_num(today)
+        shapes.append(dict(
+            type="line",
+            x0=today_num, x1=today_num, y0=0, y1=1, yref="paper",
+            line=dict(color="#6C8EF5", width=2)
+        ))
+        annotations.append(dict(
+            x=today_num, y=1, yref="paper",
+            text="오늘", showarrow=False,
+            font=dict(color="#6C8EF5", size=11),
+            xanchor="left", yanchor="bottom"
+        ))
 
     fig.update_layout(
-        barmode="overlay",
+        barmode="stack",
         xaxis=dict(
-            type="date",
-            range=[
-                month_start.strftime("%Y-%m-%d"),
-                month_end.strftime("%Y-%m-%d")
-            ],
-            tickformat="%m/%d",
-            dtick="D1" if mode == "day" else "D7",
-            gridcolor="#f0f4f9",
-            showgrid=True,
+            range=[ms_num, me_num + 1],
+            tickvals=tickvals,
+            ticktext=ticktext,
+            tickfont=dict(size=10),
+            showgrid=False,
         ),
         yaxis=dict(
             autorange="reversed",
-            tickfont=dict(size=12)
+            tickfont=dict(size=12),
         ),
-        height=max(250, 60 + len(work_list) * 40),
+        height=max(300, 80 + len(visible_works) * 45),
         paper_bgcolor="#ffffff",
         plot_bgcolor="#f8faff",
         font=dict(family="Segoe UI, sans-serif", size=12),
-        margin=dict(l=10, r=20, t=20, b=30),
+        margin=dict(l=10, r=20, t=20, b=40),
+        shapes=shapes,
+        annotations=annotations,
     )
     return fig
