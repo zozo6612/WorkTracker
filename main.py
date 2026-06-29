@@ -13,13 +13,13 @@ st.set_page_config(
 st.markdown("""
 <style>
     [data-testid="stSidebar"] {
-        background-color: #1a1a2e !important;
+        background-color: #1E2A4A !important;
     }
     [data-testid="stSidebar"] * {
-        color: #8892b0;
+        color: #8899CC;
     }
     [data-testid="stSidebar"] hr {
-        border-color: #2d2d4e !important;
+        border-color: #2d3d66 !important;
     }
     [data-testid="stSidebarNav"] {
         display: none !important;
@@ -32,34 +32,37 @@ st.markdown("""
         padding: 12px 16px;
         margin-bottom: 6px;
         border-radius: 10px;
-        border: 1px solid #3d3d5e !important;
-        background: #2a2a4a !important;
-        color: #aab4d0 !important;
+        border: 1px solid #2d3d66 !important;
+        background: transparent !important;
+        color: #8899CC !important;
         font-size: 14px !important;
         font-weight: 500 !important;
         text-align: left !important;
         box-shadow: none !important;
     }
     div[data-testid="stSidebar"] .stButton button:hover {
-        background: #3a3a6a !important;
+        background: rgba(255,140,66,0.1) !important;
         color: #ffffff !important;
-        border-color: #6C8EF5 !important;
+        border-color: #FF8C42 !important;
     }
 
-    /* 활성 버튼 (현재 페이지) */
+    /* 활성 버튼 */
     div[data-testid="stSidebar"] .stButton button[kind="primary"] {
-        background: #6C8EF5 !important;
-        color: #ffffff !important;
-        border: none !important;
-        border-radius: 10px !important;
+        background: rgba(255,140,66,0.2) !important;
+        color: #FF8C42 !important;
+        border-left: 3px solid #FF8C42 !important;
+        border-top: 1px solid #2d3d66 !important;
+        border-right: 1px solid #2d3d66 !important;
+        border-bottom: 1px solid #2d3d66 !important;
+        border-radius: 0 10px 10px 0 !important;
         font-weight: 700 !important;
     }
     div[data-testid="stSidebar"] .stButton button[kind="primary"]:hover {
-        background: #5a7de0 !important;
-        color: #ffffff !important;
+        background: rgba(255,140,66,0.3) !important;
+        color: #FF8C42 !important;
     }
 
-    /* 버튼 안 텍스트 색상 강제 적용 */
+    /* 버튼 텍스트 색상 강제 적용 */
     div[data-testid="stSidebar"] .stButton button p {
         color: inherit !important;
     }
