@@ -61,6 +61,26 @@ def add_history(type_, date, title, content, keywords="[]"):
         return False
 
 
+def add_history_bulk(records):
+    if not records:
+        return 0
+    try:
+        conn = get_connection()
+        conn.executemany(
+            "INSERT INTO history (type, date, title, content, keywords) VALUES (?,?,?,?,?)",
+            [
+                (r["type"], r["date"], r.get("title", ""), r["content"], r.get("keywords", "[]"))
+                for r in records
+            ],
+        )
+        conn.commit()
+        conn.close()
+        return len(records)
+    except Exception as e:
+        print(f"[DB 오류] add_history_bulk 실패: {e}")
+        return 0
+
+
 def get_history(year=None, month=None, type_=None):
     try:
         conn = get_connection()
@@ -111,6 +131,33 @@ def add_work(title, status, start_date, end_date, progress, description):
     except Exception as e:
         print(f"[DB 오류] add_work 실패: {e}")
         return False
+
+
+def add_work_bulk(records):
+    if not records:
+        return 0
+    try:
+        conn = get_connection()
+        conn.executemany(
+            "INSERT INTO work (title, status, start_date, end_date, progress, description) VALUES (?,?,?,?,?,?)",
+            [
+                (
+                    r["title"],
+                    r["status"],
+                    r["start_date"],
+                    r["end_date"],
+                    r.get("progress", 0),
+                    r.get("description", ""),
+                )
+                for r in records
+            ],
+        )
+        conn.commit()
+        conn.close()
+        return len(records)
+    except Exception as e:
+        print(f"[DB 오류] add_work_bulk 실패: {e}")
+        return 0
 
 
 def get_work(status=None):

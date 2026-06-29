@@ -1,8 +1,10 @@
 import streamlit as st
 import json
 import datetime
-from database.db import add_history, get_history, delete_history
+from database.db import add_history, add_history_bulk, get_history, delete_history
 from components.ai_summary import extract_keywords
+from components.excel_upload import render_excel_upload
+from utils.excel_import import parse_history_excel
 
 
 def render():
@@ -46,6 +48,22 @@ def render():
         if "kw_preview" in st.session_state:
             st.markdown("**AI 추출 키워드 미리보기:**  " +
                         " ".join([f"`#{k}`" for k in st.session_state["kw_preview"]]))
+
+    with st.expander("📤 Excel 업로드", expanded=False):
+        render_excel_upload(
+            caption="열: 유형, 날짜, 제목, 내용, 키워드 · .xlsx 형식 · 내용·날짜 필수",
+            uploader_key="history_excel_upload",
+            state_prefix="history_excel",
+            parse_fn=parse_history_excel,
+            preview_rows_fn=lambda r: {
+                "유형": r["type"],
+                "날짜": r["date"],
+                "제목": r.get("title", ""),
+                "내용": r["content"][:80] + ("…" if len(r["content"]) > 80 else ""),
+                "키워드": r.get("keywords", "[]"),
+            },
+            save_fn=add_history_bulk,
+        )
 
     st.divider()
 
