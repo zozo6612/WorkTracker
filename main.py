@@ -16,49 +16,47 @@ st.markdown("""
         background-color: #1E2A4A !important;
     }
     [data-testid="stSidebar"] * {
-        color: #8899CC;
-    }
-    [data-testid="stSidebar"] hr {
-        border-color: #2d3d66 !important;
+        color: #8899CC !important;
     }
     [data-testid="stSidebarNav"] {
         display: none !important;
     }
-    div[data-testid="stSidebar"] .stButton button {
-        display: block;
-        width: 100%;
-        padding: 12px 16px;
-        margin-bottom: 6px;
+    [data-testid="stSidebar"] hr {
+        border-color: #2d3d66 !important;
+        margin: 8px 0 16px !important;
+    }
+    .nav-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 13px 18px;
+        margin-bottom: 8px;
         border-radius: 10px;
-        border: 1px solid #2d3d66 !important;
-        background: transparent !important;
+        border: 1px solid #2d3d66;
+        background: transparent;
         color: #8899CC !important;
-        font-size: 14px !important;
-        font-weight: 500 !important;
-        text-align: left !important;
-        box-shadow: none !important;
+        font-size: 20px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.15s;
     }
-    div[data-testid="stSidebar"] .stButton button:hover {
-        background: rgba(255,140,66,0.1) !important;
+    .nav-item:hover {
+        background: #2d4080;
+        border-color: #FF8C42;
         color: #ffffff !important;
-        border-color: #FF8C42 !important;
     }
-    div[data-testid="stSidebar"] .stButton button[kind="primary"] {
-        background: rgba(255,140,66,0.2) !important;
+    .nav-item.active {
+        background: rgba(255,140,66,0.15);
+        border-left: 3px solid #FF8C42;
+        border-top: 1px solid #2d3d66;
+        border-right: 1px solid #2d3d66;
+        border-bottom: 1px solid #2d3d66;
+        border-radius: 0 10px 10px 0;
         color: #FF8C42 !important;
-        border-left: 3px solid #FF8C42 !important;
-        border-top: 1px solid #2d3d66 !important;
-        border-right: 1px solid #2d3d66 !important;
-        border-bottom: 1px solid #2d3d66 !important;
-        border-radius: 0 10px 10px 0 !important;
-        font-weight: 700 !important;
+        font-weight: 600;
     }
-    div[data-testid="stSidebar"] .stButton button[kind="primary"]:hover {
-        background: rgba(255,140,66,0.3) !important;
-        color: #FF8C42 !important;
-    }
-    div[data-testid="stSidebar"] .stButton button p {
-        color: inherit !important;
+    .nav-item i {
+        font-size: 18px;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -67,6 +65,11 @@ init_db()
 
 if "current_page" not in st.session_state:
     st.session_state["current_page"] = "history"
+
+# 쿼리 파라미터로 페이지 전환 처리
+params = st.query_params
+if "page" in params:
+    st.session_state["current_page"] = params["page"]
 
 
 def load_page(filename):
@@ -81,25 +84,14 @@ def load_page(filename):
     return None
 
 
-def nav_button(label, page_key):
-    is_active = st.session_state["current_page"] == page_key
-    if st.sidebar.button(
-        label,
-        key=f"nav_{page_key}",
-        type="primary" if is_active else "secondary",
-        use_container_width=True
-    ):
-        st.session_state["current_page"] = page_key
-        st.rerun()
-
-
 with st.sidebar:
     st.markdown("""
-        <div style='padding: 0 8px 20px;'>
-            <div style='font-size:18px;font-weight:700;color:#ffffff;'>
+        <div style='padding:0 4px 30px;'>
+            <div style='font-size:30px;font-weight:700;color:#ffffff !important;
+                        letter-spacing:-0.3px;'>
                 📋 WorkTracker
             </div>
-            <div style='font-size:12px;color:#8899CC;margin-top:4px;'>
+            <div style='font-size:18px;color:#6677AA !important;margin-top:5px;'>
                 업무 이력 & 보고서 자동화
             </div>
         </div>
@@ -107,9 +99,24 @@ with st.sidebar:
 
     st.divider()
 
-    nav_button("📁  Work History", "history")
-    nav_button("💼  My Work",      "mywork")
-    nav_button("📊  주간 보고서",   "report")
+    cur = st.session_state["current_page"]
+
+    pages = [
+        ("history", "ti-folder",           "Work History"),
+        ("mywork",  "ti-briefcase",         "My Work"),
+        ("report",  "ti-report-analytics",  "Weekly Report"),
+    ]
+
+    for page_key, icon, label in pages:
+        active_class = "active" if cur == page_key else ""
+        st.markdown(f"""
+            <a href="?page={page_key}" target="_self" style="text-decoration:none;">
+                <div class="nav-item {active_class}">
+                    <i class="ti {icon}" aria-hidden="true"></i>
+                    {label}
+                </div>
+            </a>
+        """, unsafe_allow_html=True)
 
 
 page   = st.session_state["current_page"]
