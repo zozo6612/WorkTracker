@@ -24,8 +24,6 @@ st.markdown("""
     [data-testid="stSidebarNav"] {
         display: none !important;
     }
-
-    /* 비활성 버튼 */
     div[data-testid="stSidebar"] .stButton button {
         display: block;
         width: 100%;
@@ -45,8 +43,6 @@ st.markdown("""
         color: #ffffff !important;
         border-color: #FF8C42 !important;
     }
-
-    /* 활성 버튼 */
     div[data-testid="stSidebar"] .stButton button[kind="primary"] {
         background: rgba(255,140,66,0.2) !important;
         color: #FF8C42 !important;
@@ -61,8 +57,6 @@ st.markdown("""
         background: rgba(255,140,66,0.3) !important;
         color: #FF8C42 !important;
     }
-
-    /* 버튼 텍스트 색상 강제 적용 */
     div[data-testid="stSidebar"] .stButton button p {
         color: inherit !important;
     }
@@ -105,7 +99,7 @@ with st.sidebar:
             <div style='font-size:18px;font-weight:700;color:#ffffff;'>
                 📋 WorkTracker
             </div>
-            <div style='font-size:12px;color:#8892b0;margin-top:4px;'>
+            <div style='font-size:12px;color:#8899CC;margin-top:4px;'>
                 업무 이력 & 보고서 자동화
             </div>
         </div>
