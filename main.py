@@ -109,56 +109,56 @@ def nav_button(label, page_key):
 # 사이드바
 with st.sidebar:
      st.markdown("""
-    <style>
+     <style>
         /* 사이드바 배경 네이비로 변경 */
-    [data-testid="stSidebar"] {
+        [data-testid="stSidebar"] {
         background-color: #1a1a2e !important;
-    }
-    [data-testid="stSidebar"] * {
+        }
+        [data-testid="stSidebar"] * {
         color: #8892b0;
-    }
-    [data-testid="stSidebar"] hr {
+        }
+        [data-testid="stSidebar"] hr {
         border-color: #2d2d4e !important;
-    }
+        }
 
-    /* 자동 생성된 상단 페이지 메뉴 숨기기 */
-    [data-testid="stSidebarNav"] {display: none !important;}
+        /* 자동 생성된 상단 페이지 메뉴 숨기기 */
+        [data-testid="stSidebarNav"] {display: none !important;}
 
-    /* 비활성 버튼 */
-    div[data-testid="stSidebar"] .stButton button {
-        display: block;
-        width: 100%;
-        padding: 12px 16px;
-        margin-bottom: 6px;
-        border-radius: 10px;
-        border: 1px solid #2d2d4e !important;
-        background: transparent !important;
-        color: #8892b0 !important;
-        font-size: 14px !important;
-        font-weight: 500 !important;
-        text-align: left !important;
-        cursor: pointer;
-        transition: all 0.15s;
-        box-shadow: none !important;
-    }
-    div[data-testid="stSidebar"] .stButton button:hover {
-        background: rgba(108,142,245,0.1) !important;
-        color: #ffffff !important;
-        border-color: #6C8EF5 !important;
-    }
+        /* 비활성 버튼 */
+        div[data-testid="stSidebar"] .stButton button {
+            display: block;
+            width: 100%;
+            padding: 12px 16px;
+            margin-bottom: 6px;
+            border-radius: 10px;
+            border: 1px solid #2d2d4e !important;
+            background: transparent !important;
+            color: #8892b0 !important;
+            font-size: 14px !important;
+            font-weight: 500 !important;
+            text-align: left !important;
+            cursor: pointer;
+            transition: all 0.15s;
+            box-shadow: none !important;
+        }
+        div[data-testid="stSidebar"] .stButton button:hover {
+            background: rgba(108,142,245,0.1) !important;
+            color: #ffffff !important;
+            border-color: #6C8EF5 !important;
+        }
 
-    /* 활성 버튼 (현재 페이지) */
-    div[data-testid="stSidebar"] .stButton button[kind="primary"] {
-        background: rgba(108,142,245,0.2) !important;
-        color: #ffffff !important;
-        border-left: 3px solid #6C8EF5 !important;
-        border-top: 1px solid #2d2d4e !important;
-        border-right: 1px solid #2d2d4e !important;
-        border-bottom: 1px solid #2d2d4e !important;
-        border-radius: 0 10px 10px 0 !important;
-    }
-</style>
-""", unsafe_allow_html=True)
+        /* 활성 버튼 (현재 페이지) */
+        div[data-testid="stSidebar"] .stButton button[kind="primary"] {
+            background: rgba(108,142,245,0.2) !important;
+            color: #ffffff !important;
+            border-left: 3px solid #6C8EF5 !important;
+            border-top: 1px solid #2d2d4e !important;
+            border-right: 1px solid #2d2d4e !important;
+            border-bottom: 1px solid #2d2d4e !important;
+            border-radius: 0 10px 10px 0 !important;
+        }
+    </style>
+    """, unsafe_allow_html=True)
 
     st.divider()
 
