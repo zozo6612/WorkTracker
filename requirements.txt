@@ -4,4 +4,4 @@ pandas==2.2.0              # 데이터 처리
 anthropic==0.21.0          # Claude AI API
 python-pptx==0.6.23        # PPT 파일 생성
 supabase
-openpyx1
+openpyxl
