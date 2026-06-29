@@ -24,35 +24,44 @@ st.markdown("""
     [data-testid="stSidebarNav"] {
         display: none !important;
     }
+
+    /* 비활성 버튼 */
     div[data-testid="stSidebar"] .stButton button {
         display: block;
         width: 100%;
         padding: 12px 16px;
         margin-bottom: 6px;
         border-radius: 10px;
-        border: 1px solid #2d2d4e !important;
-        background: transparent !important;
-        color: #8892b0 !important;
+        border: 1px solid #3d3d5e !important;
+        background: #2a2a4a !important;
+        color: #aab4d0 !important;
         font-size: 14px !important;
         font-weight: 500 !important;
         text-align: left !important;
-        cursor: pointer;
-        transition: all 0.15s;
         box-shadow: none !important;
     }
     div[data-testid="stSidebar"] .stButton button:hover {
-        background: rgba(108,142,245,0.1) !important;
+        background: #3a3a6a !important;
         color: #ffffff !important;
         border-color: #6C8EF5 !important;
     }
+
+    /* 활성 버튼 (현재 페이지) */
     div[data-testid="stSidebar"] .stButton button[kind="primary"] {
-        background: rgba(108,142,245,0.2) !important;
+        background: #6C8EF5 !important;
         color: #ffffff !important;
-        border-left: 3px solid #6C8EF5 !important;
-        border-top: 1px solid #2d2d4e !important;
-        border-right: 1px solid #2d2d4e !important;
-        border-bottom: 1px solid #2d2d4e !important;
-        border-radius: 0 10px 10px 0 !important;
+        border: none !important;
+        border-radius: 10px !important;
+        font-weight: 700 !important;
+    }
+    div[data-testid="stSidebar"] .stButton button[kind="primary"]:hover {
+        background: #5a7de0 !important;
+        color: #ffffff !important;
+    }
+
+    /* 버튼 안 텍스트 색상 강제 적용 */
+    div[data-testid="stSidebar"] .stButton button p {
+        color: inherit !important;
     }
 </style>
 """, unsafe_allow_html=True)
